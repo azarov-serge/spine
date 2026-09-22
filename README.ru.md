@@ -1,18 +1,18 @@
 # Spine
 
-Thin HTTP framework for Go — a small wrapper around [chi](https://github.com/go-chi/chi) in the style of **Express / Fastify / Fiber**.
+Тонкий HTTP-фреймворк на Go — обёртка над [chi](https://github.com/go-chi/chi) в стиле **Express / Fastify / Fiber**.
 
-Handlers return `error`. Responses are written through `Context` methods, not by writing to `http.ResponseWriter` directly.
+Handler возвращает `error`. Ответы пишутся через методы `Context`, а не напрямую в `http.ResponseWriter`.
 
-[Русская версия](README.ru.md) · [pkg.go.dev](https://pkg.go.dev/github.com/azarov-serge/spine)
+[English](README.md) · [pkg.go.dev](https://pkg.go.dev/github.com/azarov-serge/spine)
 
-## Install
+## Установка
 
 ```bash
 go get github.com/azarov-serge/spine@latest
 ```
 
-## Quick start
+## Быстрый старт
 
 ```go
 package main
@@ -48,27 +48,27 @@ func main() {
 }
 ```
 
-## Mapping
+## Соответствие
 
 | Express / Fastify / Fiber | Spine |
 | ------------------------- | ----- |
 | `(req, res) => { ... }` | `func(*Context) error` |
 | `res.json(200, data)` | `return c.OK(data)` |
-| `next()` in middleware | `return next(c)` |
+| `next()` в middleware | `return next(c)` |
 | `app.use(mw)` | `router.Use(mw)` |
 | `app.use('/api', r)` | `router.Group("/api", fn)` |
 
-**Rule:** do not write to `c.Writer` directly — use `Context` methods or return `*HTTPError`.  
-Unexpected errors (not `*HTTPError`) become **500** with `internal_error`.
+**Правило:** не пишите в `c.Writer` напрямую — только методы `Context` или возврат `*HTTPError`.  
+Непредвиденная ошибка (не `*HTTPError`) → **500** с `internal_error`.
 
-## API overview
+## Обзор API
 
 ### App
 
 ```go
 app := spine.New(spine.Config{
-    ServiceName: "demo", // startup log
-    Logger:      nil,    // nil → text slog on stdout
+    ServiceName: "demo", // имя в логе старта
+    Logger:      nil,    // nil → text slog на stdout
 })
 
 app.Use(middlewares...)
@@ -80,21 +80,21 @@ app.Run(":8080")
 
 ### Context
 
-| Method | Purpose |
-| ------ | ------- |
-| `Context()` | `context.Context` for services / DB |
-| `Param("id")` | path param (`/todos/{id}`) |
+| Метод | Назначение |
+| ----- | ---------- |
+| `Context()` | `context.Context` для service / БД |
+| `Param("id")` | path-параметр (`/todos/{id}`) |
 | `Query("q")` | query string |
-| `BindJSON(&dst)` | JSON body; unknown fields → 400 |
+| `BindJSON(&dst)` | JSON body; лишние поля → 400 |
 | `OK(data)` | 200 JSON |
 | `Created(data)` | 201 JSON |
-| `JSON(status, data)` | any status + JSON |
+| `JSON(status, data)` | любой статус + JSON |
 | `Text(status, s)` | plain text |
-| `NoContent(status)` | no body (e.g. 204) |
+| `NoContent(status)` | без тела (обычно 204) |
 
-### Errors
+### Ошибки
 
-| Helper | Status | `code` |
+| Хелпер | Статус | `code` |
 | ------ | ------ | ------ |
 | `BadRequest` | 400 | `bad_request` |
 | `Unauthorized` | 401 | `unauthorized` |
@@ -109,7 +109,7 @@ app.Run(":8080")
 
 ### Middleware
 
-Built-in: `RequestID()`, `Logger()`, `Recover()`.
+Встроенные: `RequestID()`, `Logger()`, `Recover()`.
 
 ```go
 app.Use(spine.RequestID(), spine.Logger(), spine.Recover())
@@ -120,9 +120,9 @@ app.Group("/admin", func(admin spine.Router) {
 })
 ```
 
-Parent middleware is copied into nested groups; group `Use` adds on top.
+Middleware родителя копируется во вложенные группы; `Use` группы добавляет поверх.
 
-### Groups
+### Группы
 
 ```go
 app.Group("/categories", func(cats spine.Router) {
@@ -133,16 +133,16 @@ app.Group("/categories", func(cats spine.Router) {
 })
 ```
 
-Path params use chi syntax: `{id}`, `{categoryId}`.
+Path-параметры — синтаксис chi: `{id}`, `{categoryId}`.
 
-## Example
+## Пример
 
-See [`examples/basic`](examples/basic).
+См. [`examples/basic`](examples/basic).
 
-## Requirements
+## Требования
 
 - Go 1.23+
 
-## License
+## Лицензия
 
 [MIT](LICENSE)
